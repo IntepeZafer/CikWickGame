@@ -1,14 +1,33 @@
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class TestingScript : MonoBehaviour
 {
-    int count = 0;
-    float speed = 5.0f;
-    string message = "Hello , Unity!";
-    bool isActive = true;
-    GameObject player;
+    public int myInt = 5;
 
-    void TestFunction()
+    void Awake() // TODO:Oyun Başlamadan Önce Çalışır
+    {
+        Debug.Log("Awake Çalıştı");
+        Debug.Log("myInt Değeri: " + myInt);
+    }
+
+    
+    void Start() // TODO:  Oyun Başladıktan Sonra Çalışır
+    {
+        Debug.Log("Awake Çalıştı"); 
+        Debug.Log("myInt Değeri: " + myInt); 
+    }
+
+    void Update() // TODO: Her Frame'de Bir Kez Çalışır
+    {
+
+    }
+    
+    private void FixedUpdate() // TODO: Fizik İşlemleri İçin Kullanılır
+    {
+
+    }
+    void LateUpdate() // TODO: Update'den Sonra Çalışır
     {
         
     }

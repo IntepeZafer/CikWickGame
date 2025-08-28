@@ -56,5 +56,8 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "CikWickGame.sln"
+    "dotnet.defaultSolution": "CikWickGame.sln",
+    "todo-tree.tree.showBadges": false,
+    "todo-tree.tree.disableCompactFolders": false,
+    "todo-tree.tree.showCountsInTree": true
 }
