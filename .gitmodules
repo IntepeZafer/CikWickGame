@@ -1,0 +1,3 @@
+[submodule "Packages/GameHalperControlKit"]
+	path = Packages/GameHalperControlKit
+	url = https://github.com/IntepeZafer/GameHalperControlKit.git
