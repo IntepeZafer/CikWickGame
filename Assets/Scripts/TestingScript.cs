@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -50,5 +51,57 @@ public class TestingScript : MonoBehaviour
         {
             Debug.Log("Bilinmeyen Durum");
         }
+
+        switch (number)
+        {
+            case 1:
+                Debug.Log("Sayı 1");
+                break;
+            case 2:
+                Debug.Log("Sayı 2");
+                break;
+            case 3:
+                Debug.Log("Sayı 3");
+                break;
+            case 4:
+                Debug.Log("Sayı 4");
+                break;
+            case 5:
+                Debug.Log("Sayı 5");
+                break;
+            default:
+                Debug.Log("Sayı 1-5 Arasında Değil");
+                break;
+        }
+        for (int i = 0; i < 5; i++)
+        {
+            Debug.Log("For Döngüsü: " + i);
+        }
+
+        while (number < 10)
+        {
+            Debug.Log("While Döngüsü: " + number);
+            number++;
+        }
+        do
+        {
+            Debug.Log("Do-While Döngüsü: " + number);
+            number++;
+        } while (number < 10);
+
+        int[] numbers = { 1, 2, 3, 4, 5 };
+        foreach (int num in numbers)
+        {
+            Debug.Log("Foreach Döngüsü: " + num);
+        }
+        List<int> numberList = new List<int> { 1, 2, 3, 4, 5 };
+        foreach (int num in numberList)
+        {
+            Debug.Log("Liste Elemanı: " + num);
+        }
+        numberList.Add(6); // Listeye 6 eklenir
+        numberList.Remove(3); // Listeden 3 çıkarılır
+        numberList.Insert(2, 10); // 2. indekse 10 eklenir
+        Debug.Log("Liste Boyutu: " + numberList.Count); // Çıktı
     }
 }
