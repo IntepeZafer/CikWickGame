@@ -1,8 +1,9 @@
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEngine;
 
-public class TestingScript : MonoBehaviour
+namespace SlientWalker
+{
+    public class TestingScript : MonoBehaviour
 {
     int number = 5;
     void Awake() // TODO:Oyun Başlamadan Önce Çalışır
@@ -105,3 +106,5 @@ public class TestingScript : MonoBehaviour
         Debug.Log("Liste Boyutu: " + numberList.Count); // Çıktı
     }
 }
+}
+

@@ -231,6 +231,13 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.zafer.gamehelpercontrolkit": {
+      "version": "https://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@github.com/IntepeZafer/GameHalperControlKit.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "c72fe3c5c651c8197b3f89288eb03ada257fef6a"
+    },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
       "depth": 0,
