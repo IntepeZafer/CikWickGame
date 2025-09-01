@@ -6,7 +6,9 @@ namespace SlientWalker
 {
     public class TestingScript : MonoBehaviour
 {
-    int number = 5;
+    public int number = 5;
+        [SerializeField]private int[] numbersArray;
+        [SerializeField]private List<int> numberLsit = new List<int>();
     void Awake() // TODO:Oyun Başlamadan Önce Çalışır
     {
         Debug.Log("Awake Çalıştı");
@@ -35,7 +37,7 @@ namespace SlientWalker
     {
         Debug.Log("LateUpdate Çalıştı");
     }
-    void myFunction()
+    public void myFunction()
     {
         if (number > 10)
         {
