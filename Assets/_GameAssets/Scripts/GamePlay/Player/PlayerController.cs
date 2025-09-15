@@ -1,7 +1,10 @@
+using System;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public event Action OnPlayerJumped;
+    private StateController _stateController;
     private Rigidbody _playerRigidbody;
     [Header("Referances")]
     [SerializeField] private Transform _orientationTransform;
@@ -18,6 +21,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _jumpForce = 5f;
     [SerializeField] private bool _canJump;
     [SerializeField] private float _jumpCooldown = 0.25f;
+    [SerializeField] private float _airMultiplier;
+    [SerializeField] private float _airDrag;
     [Header("Ground Check Settings")]
     [SerializeField] private float _playerHeight = 1f;
     [SerializeField] private LayerMask _groundLayer;
@@ -32,12 +37,15 @@ public class PlayerController : MonoBehaviour
     {
         _playerRigidbody = GetComponent<Rigidbody>();
         _playerRigidbody.freezeRotation = true;
+        _stateController = GetComponent<StateController>();
     }
+    
     void Update()
     {
         SetInputs();
         SetPlayerDrag();
         LimitPlayerSpeed();
+        SetStates();
     }
     void FixedUpdate()
     {
@@ -51,7 +59,7 @@ public class PlayerController : MonoBehaviour
         {
             _isSliding = true;
         }
-        else if(Input.GetKeyDown(_movementKey))
+        else if (Input.GetKeyDown(_movementKey))
         {
             _isSliding = false;
         }
@@ -62,33 +70,52 @@ public class PlayerController : MonoBehaviour
             Invoke(nameof(resetJumping), _jumpCooldown);
         }
     }
+    private void SetStates()
+    {
+        var movementDirection = GetMovementDirection();
+        var isGrounded = IsGrounded();
+        var currentState = _stateController.GetCurrentState();
+        var isSliding = IsSliding();
+        var newState = currentState switch
+        {
+            _ when movementDirection == Vector3.zero && isGrounded && !isSliding => PlayerState.Idle,
+            _ when movementDirection != Vector3.zero && isGrounded && !isSliding => PlayerState.Move,
+            _ when movementDirection != Vector3.zero && isGrounded && isSliding => PlayerState.Slide,
+            _ when movementDirection == Vector3.zero && isGrounded && isSliding => PlayerState.SlideIdle,
+            _ when !_canJump && !isGrounded => PlayerState.Jump,
+            _ => currentState
+        };
+        if (newState != currentState)
+        {
+            _stateController.ChangeState(newState);
+        }
+    }
     private void SetPlayerMovement()
     {
         _movementDirection = _orientationTransform.forward * _verticalInput + _orientationTransform.right * _horizontalInput;
-        if (_isSliding)
+        float forceMultiplier = _stateController.GetCurrentState() switch
         {
-            _playerRigidbody.AddForce(_movementDirection.normalized * _movementSpeed * _slideMultiplier, ForceMode.Force);
-        }
-        else
-        {
-            _playerRigidbody.AddForce(_movementDirection.normalized * _movementSpeed, ForceMode.Force);
-        }
+            PlayerState.Move => 1f,
+            PlayerState.Slide => _slideMultiplier,
+            PlayerState.Jump => _airMultiplier,
+            _ => 1f
+        };
+        _playerRigidbody.AddForce(_movementDirection.normalized * _movementSpeed * forceMultiplier, ForceMode.Force);
     }
     private void SetPlayerDrag()
     {
-        if (_isSliding)
+        _playerRigidbody.linearDamping = _stateController.GetCurrentState() switch
         {
-            _playerRigidbody.linearDamping = _slideDrag;
-        }
-        else
-        {
-            _playerRigidbody.linearDamping = _groundDrag;
-        }
+            PlayerState.Move => _groundDrag,
+            PlayerState.Slide => _slideDrag,
+            PlayerState.Jump => _airDrag,
+            _ => _playerRigidbody.linearDamping
+        };  
     }
     private void LimitPlayerSpeed()
     {
         Vector3 flatVelocity = new Vector3(_playerRigidbody.linearVelocity.x, 0f, _playerRigidbody.linearVelocity.z);
-        if(flatVelocity.magnitude > _movementSpeed)
+        if (flatVelocity.magnitude > _movementSpeed)
         {
             Vector3 limitedVelocity = flatVelocity.normalized * _movementSpeed;
             _playerRigidbody.linearVelocity = new Vector3(limitedVelocity.x, _playerRigidbody.linearVelocity.y, limitedVelocity.z);
@@ -96,6 +123,7 @@ public class PlayerController : MonoBehaviour
     }
     private void SetPlayerJumping()
     {
+        OnPlayerJumped?.Invoke();
         _playerRigidbody.linearVelocity = new Vector3(_playerRigidbody.linearVelocity.x, 0f, _playerRigidbody.linearVelocity.z);
         _playerRigidbody.AddForce(transform.up * _jumpForce, ForceMode.Impulse);
     }
@@ -106,6 +134,14 @@ public class PlayerController : MonoBehaviour
 
     private bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, Vector3.down, _playerHeight * 0.5f + 0.2f , _groundLayer); 
+        return Physics.Raycast(transform.position, Vector3.down, _playerHeight * 0.5f + 0.2f, _groundLayer);
+    }
+    private Vector3 GetMovementDirection()
+    {
+        return _movementDirection.normalized;
+    }
+    private bool IsSliding()
+    {
+        return _isSliding;
     }
 }
